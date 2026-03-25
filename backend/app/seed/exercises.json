@@ -1,0 +1,188 @@
+[
+  {
+    "name": "Barbell Bench Press",
+    "description": "Lie on a flat bench, grip the barbell slightly wider than shoulder-width, lower to chest and press up.",
+    "muscle_group": "chest",
+    "tags": ["barbell", "compound"]
+  },
+  {
+    "name": "Incline Dumbbell Press",
+    "description": "Press dumbbells upward on an incline bench set to 30-45 degrees.",
+    "muscle_group": "chest",
+    "tags": ["dumbbell", "compound"]
+  },
+  {
+    "name": "Dumbbell Fly",
+    "description": "Lie flat, extend arms with dumbbells above chest, lower in a wide arc, then bring back together.",
+    "muscle_group": "chest",
+    "tags": ["dumbbell", "isolation"]
+  },
+  {
+    "name": "Push-Up",
+    "description": "Standard push-up from the floor. Keep body straight, lower chest to ground and push back up.",
+    "muscle_group": "chest",
+    "tags": ["bodyweight", "compound"]
+  },
+  {
+    "name": "Cable Crossover",
+    "description": "Stand between cable machines, pull handles together in front of chest in a hugging motion.",
+    "muscle_group": "chest",
+    "tags": ["cable", "isolation"]
+  },
+  {
+    "name": "Barbell Back Squat",
+    "description": "Bar on upper back, squat down until thighs are parallel to the floor, then stand up.",
+    "muscle_group": "legs",
+    "tags": ["barbell", "compound"]
+  },
+  {
+    "name": "Romanian Deadlift",
+    "description": "Hold barbell with straight arms, hinge at hips keeping legs slightly bent, lower bar along legs.",
+    "muscle_group": "legs",
+    "tags": ["barbell", "compound"]
+  },
+  {
+    "name": "Leg Press",
+    "description": "Sit in the leg press machine, push the platform away by extending knees and hips.",
+    "muscle_group": "legs",
+    "tags": ["machine", "compound"]
+  },
+  {
+    "name": "Leg Curl",
+    "description": "Lie face down on the machine, curl the weight toward your glutes by bending your knees.",
+    "muscle_group": "legs",
+    "tags": ["machine", "isolation"]
+  },
+  {
+    "name": "Leg Extension",
+    "description": "Sit on the machine, extend your legs until straight, squeezing the quads at the top.",
+    "muscle_group": "legs",
+    "tags": ["machine", "isolation"]
+  },
+  {
+    "name": "Walking Lunge",
+    "description": "Step forward into a lunge, alternating legs as you walk forward.",
+    "muscle_group": "legs",
+    "tags": ["dumbbell", "compound"]
+  },
+  {
+    "name": "Calf Raise",
+    "description": "Stand on the edge of a step, raise heels as high as possible, lower and repeat.",
+    "muscle_group": "legs",
+    "tags": ["machine", "isolation"]
+  },
+  {
+    "name": "Pull-Up",
+    "description": "Hang from a bar with overhand grip, pull yourself up until chin clears the bar.",
+    "muscle_group": "back",
+    "tags": ["bodyweight", "compound"]
+  },
+  {
+    "name": "Barbell Row",
+    "description": "Bend over with flat back, pull barbell to lower chest/upper abdomen.",
+    "muscle_group": "back",
+    "tags": ["barbell", "compound"]
+  },
+  {
+    "name": "Seated Cable Row",
+    "description": "Sit at a cable row station, pull the handle toward your torso, squeezing shoulder blades.",
+    "muscle_group": "back",
+    "tags": ["cable", "compound"]
+  },
+  {
+    "name": "Lat Pulldown",
+    "description": "Sit at a lat pulldown machine, pull the bar down to upper chest.",
+    "muscle_group": "back",
+    "tags": ["cable", "compound"]
+  },
+  {
+    "name": "Dumbbell Row",
+    "description": "One arm on bench for support, row a dumbbell to your hip with the other arm.",
+    "muscle_group": "back",
+    "tags": ["dumbbell", "compound"]
+  },
+  {
+    "name": "Deadlift",
+    "description": "Stand over barbell, grip it, and lift by extending hips and knees simultaneously.",
+    "muscle_group": "back",
+    "tags": ["barbell", "compound"]
+  },
+  {
+    "name": "Overhead Press",
+    "description": "Press barbell from shoulder height to overhead, fully extending arms.",
+    "muscle_group": "shoulders",
+    "tags": ["barbell", "compound"]
+  },
+  {
+    "name": "Lateral Raise",
+    "description": "Hold dumbbells at sides, raise arms out to the sides until parallel with the floor.",
+    "muscle_group": "shoulders",
+    "tags": ["dumbbell", "isolation"]
+  },
+  {
+    "name": "Face Pull",
+    "description": "Pull a rope attachment on a cable machine toward your face, flaring elbows out.",
+    "muscle_group": "shoulders",
+    "tags": ["cable", "isolation"]
+  },
+  {
+    "name": "Rear Delt Fly",
+    "description": "Bend over or use a machine, raise arms out to the sides targeting rear delts.",
+    "muscle_group": "shoulders",
+    "tags": ["dumbbell", "isolation"]
+  },
+  {
+    "name": "Barbell Curl",
+    "description": "Stand holding a barbell with underhand grip, curl it up to shoulder height.",
+    "muscle_group": "arms",
+    "tags": ["barbell", "isolation"]
+  },
+  {
+    "name": "Dumbbell Hammer Curl",
+    "description": "Curl dumbbells with a neutral (palms facing each other) grip.",
+    "muscle_group": "arms",
+    "tags": ["dumbbell", "isolation"]
+  },
+  {
+    "name": "Tricep Pushdown",
+    "description": "Push a cable attachment down by extending elbows, keeping upper arms at your sides.",
+    "muscle_group": "arms",
+    "tags": ["cable", "isolation"]
+  },
+  {
+    "name": "Overhead Tricep Extension",
+    "description": "Hold a dumbbell overhead with both hands, lower behind head by bending elbows, then extend.",
+    "muscle_group": "arms",
+    "tags": ["dumbbell", "isolation"]
+  },
+  {
+    "name": "Dips",
+    "description": "Support yourself on parallel bars, lower your body by bending arms, then push back up.",
+    "muscle_group": "arms",
+    "tags": ["bodyweight", "compound"]
+  },
+  {
+    "name": "Plank",
+    "description": "Hold a push-up position on forearms, keeping body straight. Hold for time.",
+    "muscle_group": "core",
+    "tags": ["bodyweight", "isometric"]
+  },
+  {
+    "name": "Hanging Leg Raise",
+    "description": "Hang from a bar, raise legs until parallel to the floor or higher.",
+    "muscle_group": "core",
+    "tags": ["bodyweight", "isolation"]
+  },
+  {
+    "name": "Cable Crunch",
+    "description": "Kneel in front of a cable machine, crunch down pulling the rope toward the floor.",
+    "muscle_group": "core",
+    "tags": ["cable", "isolation"]
+  },
+  {
+    "name": "Ab Wheel Rollout",
+    "description": "Kneel and roll an ab wheel forward, extending your body, then pull back to start.",
+    "muscle_group": "core",
+    "tags": ["equipment", "compound"]
+  }
+]
