@@ -125,7 +125,7 @@ export default function Exercises() {
               </div>
               <div className="space-y-2">
                 <Label>Muscle Group</Label>
-                <Select value={newMuscleGroup} onValueChange={setNewMuscleGroup}>
+                <Select value={newMuscleGroup} onValueChange={(v) => v && setNewMuscleGroup(v)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -196,7 +196,14 @@ export default function Exercises() {
               key={exercise.id}
               className="group rounded-xl border border-border/50 bg-card p-4 transition-all hover:border-border hover:bg-card/80"
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-3">
+                {exercise.image_url && (
+                  <img
+                    src={exercise.image_url}
+                    alt={exercise.muscle_group}
+                    className="h-12 w-12 shrink-0 rounded-lg"
+                  />
+                )}
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium leading-tight text-foreground">
                     {exercise.name}
