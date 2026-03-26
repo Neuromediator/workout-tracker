@@ -9,5 +9,6 @@ class Exercise(SQLModel, table=True):
     description: str = ""
     muscle_group: str = Field(index=True)
     tags: list[str] = Field(default_factory=list, sa_column=Column(JSON))
+    image_url: str | None = Field(default=None)
     is_custom: bool = Field(default=False)
     user_id: str | None = Field(default=None, index=True)

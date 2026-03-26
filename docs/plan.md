@@ -85,7 +85,7 @@ workout-tracker/
 ## 3. Data Models
 
 ### Exercise
-- id, name, description, muscle_group, tags (JSON), is_custom (bool)
+- id, name, description, muscle_group, tags (JSON), image_url (nullable), is_custom (bool)
 
 ### Routine
 - id, user_id, name, is_template (bool)
@@ -262,10 +262,12 @@ docker compose up --build -d
 - Routine builder (create, edit, reorder exercises, set targets)
 - Predefined routine templates (Push/Pull/Legs, Full Body, Upper/Lower)
 
-### Phase 3: Workout Logging
+### Phase 3: Workout Logging ✅
 - Start session (from routine or ad-hoc)
 - Active session UI (log sets/reps/weight, add exercises mid-workout)
 - Complete session → save to history
+- Exercise images: downloaded from wger.de API, served as static files via `/static/exercises/`
+- Database migration support (auto ALTER TABLE for new columns)
 
 ### Phase 4: History & Progress
 - Session history list + detail view

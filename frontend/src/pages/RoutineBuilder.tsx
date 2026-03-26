@@ -212,7 +212,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
                     className="pl-9"
                   />
                 </div>
-                <Select value={pickerMuscle} onValueChange={setPickerMuscle}>
+                <Select value={pickerMuscle} onValueChange={(v) => v && setPickerMuscle(v)}>
                   <SelectTrigger className="w-[140px]">
                     <SelectValue />
                   </SelectTrigger>

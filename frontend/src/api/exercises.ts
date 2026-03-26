@@ -6,6 +6,7 @@ export interface Exercise {
   description: string
   muscle_group: string
   tags: string[]
+  image_url: string | null
   is_custom: boolean
   user_id: string | null
 }
