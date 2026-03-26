@@ -251,13 +251,13 @@ docker compose up --build -d
 
 ## 10. Implementation Phases
 
-### Phase 1: Foundation
+### Phase 1: Foundation ✅
 - Project scaffolding (uv, Vite, Docker Compose)
 - SQLModel models + SQLite database setup
 - Supabase Auth integration (backend JWT verification + frontend login)
 - Exercise library seed data
 
-### Phase 2: Core Workout Features
+### Phase 2: Core Workout Features ✅
 - Exercise library API + UI (list, search, filter)
 - Routine builder (create, edit, reorder exercises, set targets)
 - Predefined routine templates (Push/Pull/Legs, Full Body, Upper/Lower)
