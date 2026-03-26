@@ -3,6 +3,7 @@
 
 .claude/
 .cursor/
+tutorials/
 
 # Python
 __pycache__/
