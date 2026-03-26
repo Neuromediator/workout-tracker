@@ -214,6 +214,6 @@
     "description": "Kneel and roll an ab wheel forward, extending your body, then pull back to start.",
     "muscle_group": "core",
     "tags": ["equipment", "compound"],
-    "image_url": "/static/exercises/core.svg"
+    "image_url": "/static/exercises/ab-wheel-rollout.png"
   }
 ]
