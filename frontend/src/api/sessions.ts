@@ -5,6 +5,7 @@ export interface ExerciseSet {
   set_number: number
   reps: number
   weight: number
+  rest_seconds: number
   notes: string
 }
 
@@ -59,7 +60,7 @@ export function addExerciseToSession(
 export function logSet(
   sessionId: string,
   sessionExerciseId: string,
-  data: { set_number: number; reps: number; weight: number; notes?: string }
+  data: { set_number: number; reps: number; weight: number; rest_seconds?: number; notes?: string }
 ): Promise<WorkoutSession> {
   return apiFetch<WorkoutSession>(
     '/sessions/' + sessionId + '/exercises/' + sessionExerciseId + '/sets',

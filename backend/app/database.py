@@ -28,6 +28,13 @@ def _run_migrations():
         cursor.execute("ALTER TABLE exercise ADD COLUMN image_url TEXT")
         conn.commit()
 
+    # Add rest_seconds column to exercise_set table
+    cursor.execute("PRAGMA table_info(exercise_set)")
+    set_columns = {row[1] for row in cursor.fetchall()}
+    if "rest_seconds" not in set_columns:
+        cursor.execute("ALTER TABLE exercise_set ADD COLUMN rest_seconds INTEGER DEFAULT 0")
+        conn.commit()
+
     conn.close()
 
 

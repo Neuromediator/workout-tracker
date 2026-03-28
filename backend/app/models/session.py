@@ -11,6 +11,7 @@ class ExerciseSet(SQLModel, table=True):
     set_number: int
     reps: int = 0
     weight: float = 0.0
+    rest_seconds: int = 0
     notes: str = ""
 
     session_exercise: "SessionExercise" = Relationship(back_populates="sets")

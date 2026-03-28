@@ -200,6 +200,7 @@ export default function History({ onStartSession }: HistoryProps) {
                                     >
                                       {set.weight > 0 ? `${set.weight}kg × ` : ''}
                                       {set.reps} reps
+                                      {set.rest_seconds > 0 ? ` · ${set.rest_seconds}s rest` : ''}
                                     </span>
                                   ))}
                                 </div>

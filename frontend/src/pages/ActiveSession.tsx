@@ -104,13 +104,15 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
     sessionExerciseId: string,
     setNumber: number,
     reps: number,
-    weight: number
+    weight: number,
+    restSeconds: number
   ) => {
     try {
       const updated = await logSet(sessionId, sessionExerciseId, {
         set_number: setNumber,
         reps,
         weight,
+        rest_seconds: restSeconds,
       })
       setSession(updated)
     } catch (err) {
@@ -268,7 +270,7 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
                 {isExpanded && (
                   <div className="border-t border-border/50 p-3">
                     {/* Header row */}
-                    <div className="mb-2 grid grid-cols-[2.5rem_1fr_1fr_2.5rem] gap-2 px-1">
+                    <div className="mb-2 grid grid-cols-[2.5rem_1fr_1fr_1fr_2.5rem] gap-2 px-1">
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                         Set
                       </span>
@@ -277,6 +279,9 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
                       </span>
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                         Reps
+                      </span>
+                      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                        Rest
                       </span>
                       <span />
                     </div>
@@ -289,9 +294,10 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
                           setNumber={s.set_number}
                           initialWeight={s.weight}
                           initialReps={s.reps}
+                          initialRest={s.rest_seconds}
                           isLogged={s.reps > 0}
-                          onLog={(reps, weight) =>
-                            handleLogSet(se.id, s.set_number, reps, weight)
+                          onLog={(reps, weight, restSeconds) =>
+                            handleLogSet(se.id, s.set_number, reps, weight, restSeconds)
                           }
                         />
                       ))}
@@ -389,30 +395,34 @@ function SetRow({
   setNumber,
   initialWeight,
   initialReps,
+  initialRest,
   isLogged,
   onLog,
 }: {
   setNumber: number
   initialWeight: number
   initialReps: number
+  initialRest: number
   isLogged: boolean
-  onLog: (reps: number, weight: number) => void
+  onLog: (reps: number, weight: number, restSeconds: number) => void
 }) {
   const [weight, setWeight] = useState(initialWeight.toString())
   const [reps, setReps] = useState(initialReps.toString())
+  const [rest, setRest] = useState(initialRest > 0 ? initialRest.toString() : '')
   const [saved, setSaved] = useState(isLogged)
 
   const handleSave = () => {
     const r = parseInt(reps) || 0
     const w = parseFloat(weight) || 0
+    const rs = parseInt(rest) || 0
     if (r <= 0) return
-    onLog(r, w)
+    onLog(r, w, rs)
     setSaved(true)
   }
 
   return (
     <div
-      className={`grid grid-cols-[2.5rem_1fr_1fr_2.5rem] items-center gap-2 rounded-lg px-1 py-1 ${
+      className={`grid grid-cols-[2.5rem_1fr_1fr_1fr_2.5rem] items-center gap-2 rounded-lg px-1 py-1 ${
         saved ? 'bg-warm/5' : ''
       }`}
     >
@@ -432,7 +442,7 @@ function SetRow({
           setWeight(e.target.value)
           setSaved(false)
         }}
-        placeholder="0"
+        placeholder="kg"
         className="h-8 text-center text-sm"
       />
       <Input
@@ -444,6 +454,17 @@ function SetRow({
           setSaved(false)
         }}
         placeholder="0"
+        className="h-8 text-center text-sm"
+      />
+      <Input
+        type="number"
+        min={0}
+        value={rest}
+        onChange={(e) => {
+          setRest(e.target.value)
+          setSaved(false)
+        }}
+        placeholder="sec"
         className="h-8 text-center text-sm"
       />
       <button

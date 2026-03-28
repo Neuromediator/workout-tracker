@@ -98,7 +98,7 @@ workout-tracker/
 - id, session_id, exercise_id, order
 
 ### ExerciseSet
-- id, session_exercise_id, set_number, reps, weight, notes
+- id, session_exercise_id, set_number, reps, weight, rest_seconds, notes
 
 ### User (Supabase-managed, local reference)
 - id (Supabase UUID), ai_enabled (bool)
@@ -128,7 +128,9 @@ GET    /api/progress/personal-bests # Heaviest weight per exercise
 GET    /api/progress/exercise/{id}  # Weight/reps trend for exercise
 
 POST   /api/ai/chat                 # AI sidebar message → structured action
-PUT    /api/user/settings           # Toggle AI on/off
+POST   /api/ai/confirm              # Execute confirmed destructive action
+GET    /api/ai/settings             # Get AI toggle state
+PUT    /api/ai/settings             # Toggle AI on/off
 ```
 
 ## 5. AI Integration
@@ -266,7 +268,7 @@ docker compose up --build -d
 
 ### Phase 3: Workout Logging ✅
 - Start session (from routine or ad-hoc)
-- Active session UI (log sets/reps/weight, add exercises mid-workout)
+- Active session UI (log sets/reps/weight/rest, add exercises mid-workout)
 - Complete session → save to history
 - Exercise images: downloaded from wger.de API, served as static files via `/static/exercises/`
 - Database migration support (auto ALTER TABLE for new columns)
@@ -276,11 +278,14 @@ docker compose up --build -d
 - Reuse past session as starting point (clones structure with last weights)
 - Progress dashboard (workouts per week/month via recharts, exercise trends, personal bests)
 
-### Phase 5: AI Sidebar
-- LiteLLM + Cerebras integration with structured outputs
-- AI chat UI (sidebar on desktop, drawer on mobile)
-- AI actions: create/edit/delete sessions with confirmation
-- AI toggle (on/off preference saved per user)
+### Phase 5: AI Sidebar ✅
+- LiteLLM + Cerebras integration with structured JSON outputs via OpenRouter
+- AI chat UI (Sheet-based sidebar, floating toggle button, persistent chat history via localStorage)
+- AI actions: create/delete sessions with confirmation dialogs for destructive ops
+- AI toggle (on/off preference saved per user via `/api/ai/settings`)
+- Context-aware: AI sees exercise library, recent sessions, and user routines
+- Exercise name resolution (exact, case-insensitive, partial match)
+- Graceful error handling (null responses, API failures)
 
 ### Phase 6: Production Readiness
 - Docker production build (single container)
