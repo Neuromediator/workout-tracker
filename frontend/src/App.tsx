@@ -8,6 +8,7 @@ import RoutineBuilder from '@/pages/RoutineBuilder'
 import ActiveSession from '@/pages/ActiveSession'
 import History from '@/pages/History'
 import Progress from '@/pages/Progress'
+import AISidebar from '@/features/ai-sidebar/AISidebar'
 import { Dumbbell, Home, ClipboardList, LogOut, Play, Clock, TrendingUp } from 'lucide-react'
 
 type Page = 'dashboard' | 'exercises' | 'routines' | 'routine-builder' | 'active-session' | 'history' | 'progress'
@@ -17,6 +18,7 @@ export default function App() {
   const [page, setPage] = useState<Page>('dashboard')
   const [editRoutineId, setEditRoutineId] = useState<string | null>(null)
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   if (loading) {
     return (
@@ -124,9 +126,9 @@ export default function App() {
           />
         )}
         {page === 'history' && (
-          <History onStartSession={startSession} />
+          <History key={refreshKey} onStartSession={startSession} />
         )}
-        {page === 'progress' && <Progress />}
+        {page === 'progress' && <Progress key={refreshKey} />}
         {page === 'active-session' && activeSessionId && (
           <ActiveSession
             sessionId={activeSessionId}
@@ -141,6 +143,14 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* AI Sidebar — available on all pages except active session */}
+      {page !== 'active-session' && (
+        <AISidebar
+          onSessionCreated={startSession}
+          onSessionDeleted={() => setRefreshKey((k) => k + 1)}
+        />
+      )}
     </div>
   )
 }

@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from app.database import create_db_and_tables
 from app.seed.loader import seed_exercises
 from app.seed.templates import seed_templates
-from app.routers import exercises, routines, sessions, progress
+from app.routers import exercises, routines, sessions, progress, ai
 
 
 @asynccontextmanager
@@ -33,6 +33,7 @@ app.include_router(exercises.router)
 app.include_router(routines.router)
 app.include_router(sessions.router)
 app.include_router(progress.router)
+app.include_router(ai.router)
 
 
 @app.get("/api/health")

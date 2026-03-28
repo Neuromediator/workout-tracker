@@ -19,6 +19,7 @@ class SetIn(BaseModel):
     set_number: int
     reps: int = 0
     weight: float = 0.0
+    rest_seconds: int = 0
     notes: str = ""
 
 
@@ -49,6 +50,7 @@ class LogSetIn(BaseModel):
     set_number: int
     reps: int = 0
     weight: float = 0.0
+    rest_seconds: int = 0
     notes: str = ""
 
 
@@ -60,6 +62,7 @@ class SetOut(BaseModel):
     set_number: int
     reps: int
     weight: float
+    rest_seconds: int
     notes: str
 
 
@@ -139,6 +142,7 @@ def create_session(
                     set_number=s.set_number,
                     reps=s.reps,
                     weight=s.weight,
+                    rest_seconds=s.rest_seconds,
                     notes=s.notes,
                 )
                 session.add(es)
@@ -248,6 +252,7 @@ def log_set(
     if existing_set:
         existing_set.reps = data.reps
         existing_set.weight = data.weight
+        existing_set.rest_seconds = data.rest_seconds
         existing_set.notes = data.notes
         session.add(existing_set)
     else:
@@ -256,6 +261,7 @@ def log_set(
             set_number=data.set_number,
             reps=data.reps,
             weight=data.weight,
+            rest_seconds=data.rest_seconds,
             notes=data.notes,
         )
         session.add(es)

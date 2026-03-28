@@ -10,6 +10,7 @@ dependencies = [
     "pydantic-settings>=2.7",
     "python-jose[cryptography]>=3.3",
     "httpx>=0.28",
+    "litellm>=1.40",
 ]
 
 [dependency-groups]
