@@ -122,7 +122,9 @@ GET    /api/sessions/{id}           # Session detail
 PUT    /api/sessions/{id}           # Update session (add sets, complete)
 DELETE /api/sessions/{id}           # Delete session
 
-GET    /api/progress/summary        # Workouts per week/month
+GET    /api/progress/summary        # Workouts per week/month, total stats
+GET    /api/progress/weekly         # Workouts per week for last N weeks (chart data)
+GET    /api/progress/personal-bests # Heaviest weight per exercise
 GET    /api/progress/exercise/{id}  # Weight/reps trend for exercise
 
 POST   /api/ai/chat                 # AI sidebar message → structured action
@@ -269,10 +271,10 @@ docker compose up --build -d
 - Exercise images: downloaded from wger.de API, served as static files via `/static/exercises/`
 - Database migration support (auto ALTER TABLE for new columns)
 
-### Phase 4: History & Progress
-- Session history list + detail view
-- Reuse past session as starting point
-- Progress dashboard (workouts per week/month, exercise trends, personal bests)
+### Phase 4: History & Progress ✅
+- Session history list + detail view (inline expand)
+- Reuse past session as starting point (clones structure with last weights)
+- Progress dashboard (workouts per week/month via recharts, exercise trends, personal bests)
 
 ### Phase 5: AI Sidebar
 - LiteLLM + Cerebras integration with structured outputs

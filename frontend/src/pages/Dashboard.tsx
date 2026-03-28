@@ -10,7 +10,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { fetchRoutines, type Routine } from '@/api/routines'
 import { createSession } from '@/api/sessions'
-import { Dumbbell, ClipboardList, ArrowRight, Flame, Play, Zap } from 'lucide-react'
+import { Dumbbell, ClipboardList, ArrowRight, Flame, Play, Zap, Clock, TrendingUp } from 'lucide-react'
 
 interface DashboardProps {
   onNavigate: (page: string) => void
@@ -147,6 +147,46 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
             </p>
             <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
               View routines
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={() => onNavigate('history')}
+          className="group relative overflow-hidden rounded-xl border border-border/50 bg-card p-6 text-left transition-all hover:border-warm/30 hover:bg-card/80"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-warm/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+          <div className="relative">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/10">
+              <Clock className="h-5 w-5 text-warm" />
+            </div>
+            <h3 className="mt-4 font-heading text-lg font-semibold">History</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              View past workouts and repeat them
+            </p>
+            <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
+              View history
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={() => onNavigate('progress')}
+          className="group relative overflow-hidden rounded-xl border border-border/50 bg-card p-6 text-left transition-all hover:border-warm/30 hover:bg-card/80"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-warm/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+          <div className="relative">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/10">
+              <TrendingUp className="h-5 w-5 text-warm" />
+            </div>
+            <h3 className="mt-4 font-heading text-lg font-semibold">Progress</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Charts, trends, and personal bests
+            </p>
+            <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
+              View progress
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>

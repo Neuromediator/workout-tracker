@@ -6,9 +6,11 @@ import Exercises from '@/pages/Exercises'
 import Routines from '@/pages/Routines'
 import RoutineBuilder from '@/pages/RoutineBuilder'
 import ActiveSession from '@/pages/ActiveSession'
-import { Dumbbell, Home, ClipboardList, LogOut, Play } from 'lucide-react'
+import History from '@/pages/History'
+import Progress from '@/pages/Progress'
+import { Dumbbell, Home, ClipboardList, LogOut, Play, Clock, TrendingUp } from 'lucide-react'
 
-type Page = 'dashboard' | 'exercises' | 'routines' | 'routine-builder' | 'active-session'
+type Page = 'dashboard' | 'exercises' | 'routines' | 'routine-builder' | 'active-session' | 'history' | 'progress'
 
 export default function App() {
   const { user, loading, signOut } = useAuth()
@@ -40,6 +42,8 @@ export default function App() {
     { page: ['dashboard'], icon: Home, label: 'Home', target: 'dashboard' },
     { page: ['exercises'], icon: Dumbbell, label: 'Exercises', target: 'exercises' },
     { page: ['routines', 'routine-builder'], icon: ClipboardList, label: 'Routines', target: 'routines' },
+    { page: ['history'], icon: Clock, label: 'History', target: 'history' },
+    { page: ['progress'], icon: TrendingUp, label: 'Progress', target: 'progress' },
   ]
 
   return (
@@ -119,6 +123,10 @@ export default function App() {
             onBack={() => setPage('routines')}
           />
         )}
+        {page === 'history' && (
+          <History onStartSession={startSession} />
+        )}
+        {page === 'progress' && <Progress />}
         {page === 'active-session' && activeSessionId && (
           <ActiveSession
             sessionId={activeSessionId}
