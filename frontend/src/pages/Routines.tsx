@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { fetchRoutines, deleteRoutine, type Routine } from '@/api/routines'
 import { fetchExercises, type Exercise } from '@/api/exercises'
-import { Plus, Trash2, Edit, ClipboardList, ChevronRight } from 'lucide-react'
+import { Plus, Trash2, ClipboardList, ChevronRight } from 'lucide-react'
 
 interface RoutinesProps {
   onEdit: (routineId: string) => void

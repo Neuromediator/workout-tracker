@@ -9,7 +9,7 @@ import ActiveSession from '@/pages/ActiveSession'
 import History from '@/pages/History'
 import Progress from '@/pages/Progress'
 import AISidebar from '@/features/ai-sidebar/AISidebar'
-import { Dumbbell, Home, ClipboardList, LogOut, Play, Clock, TrendingUp } from 'lucide-react'
+import { Dumbbell, Home, ClipboardList, LogOut, Clock, TrendingUp } from 'lucide-react'
 
 type Page = 'dashboard' | 'exercises' | 'routines' | 'routine-builder' | 'active-session' | 'history' | 'progress'
 
