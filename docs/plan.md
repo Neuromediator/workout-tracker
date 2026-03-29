@@ -287,8 +287,12 @@ docker compose up --build -d
 - Exercise name resolution (exact, case-insensitive, partial match)
 - Graceful error handling (null responses, API failures)
 
-### Phase 6: Production Readiness
-- Docker production build (single container)
-- Oracle Cloud VM deployment
-- HTTPS setup
-- Integration + E2E tests for critical flows
+### Phase 6: Production Readiness ✅
+- Multi-stage Dockerfile (build frontend → copy into backend image, single container)
+- Production `docker-compose.yml` with Caddy reverse proxy for automatic HTTPS
+- Configurable CORS origins via `CORS_ORIGINS` env var (no more hardcoded localhost)
+- SPA fallback in FastAPI (serves built React app, handles client-side routing)
+- `.env.example` files for backend and frontend (no secrets in repo)
+- `.dockerignore` to keep images small
+- Integration tests: 14 tests covering exercises CRUD, session lifecycle, progress endpoints
+- Health check endpoint at `/api/health`
