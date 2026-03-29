@@ -8,8 +8,10 @@ class Settings(BaseSettings):
     supabase_jwt_secret: str = ""
     openrouter_api_key: str = ""
     database_url: str = "sqlite:///./workout_tracker.db"
+    cors_origins: str = "http://localhost:5173"
+    environment: str = "development"
 
-    model_config = {"env_file": "../.env", "extra": "ignore"}
+    model_config = {"env_file": ("../.env", ".env"), "extra": "ignore"}
 
 
 @lru_cache
