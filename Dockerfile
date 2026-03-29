@@ -1,6 +1,9 @@
 # === Stage 1: Build frontend ===
 FROM node:20-slim AS frontend-build
 
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+
 WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
