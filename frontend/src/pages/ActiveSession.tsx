@@ -31,7 +31,6 @@ import {
   Timer,
   ChevronDown,
   ChevronUp,
-  Trash2,
 } from 'lucide-react'
 
 interface ActiveSessionProps {

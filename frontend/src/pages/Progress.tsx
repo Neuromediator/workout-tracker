@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -18,7 +16,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/select'
 import {
   fetchProgressSummary,
@@ -46,7 +43,8 @@ const CHART_COLORS = {
   tooltipText: 'oklch(0.88 0.01 80)',
 }
 
-function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function ChartTooltip(props: TooltipProps<number, string>) {
+  const { active, payload, label } = props as { active?: boolean; payload?: Array<{ color?: string; value?: number; name?: string }>; label?: string }
   if (!active || !payload?.length) return null
   return (
     <div
@@ -61,7 +59,7 @@ function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) 
       <p style={{ color: CHART_COLORS.axisText, fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>
         {label}
       </p>
-      {payload.map((entry, i) => (
+      {payload.map((entry: { color?: string; value?: number; name?: string }, i: number) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
           <div
             style={{
@@ -243,7 +241,7 @@ export default function Progress() {
               </div>
               <h2 className="font-heading text-base font-semibold">Exercise Trend</h2>
             </div>
-            <Select value={selectedExercise} onValueChange={setSelectedExercise}>
+            <Select value={selectedExercise} onValueChange={(v) => v && setSelectedExercise(v)}>
               <SelectTrigger className="w-[200px]">
                 <span className="truncate">
                   {bests.find((b) => b.exercise_id === selectedExercise)?.exercise_name || 'Select exercise'}
