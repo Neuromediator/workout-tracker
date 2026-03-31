@@ -27,6 +27,7 @@ import {
   type PersonalBest,
   type ExerciseTrendPoint,
 } from '@/api/progress'
+import { useTranslation } from '@/lib/i18n'
 import { TrendingUp, Trophy, Activity, Dumbbell, Weight, Flame, Zap } from 'lucide-react'
 
 // Resolved color tokens for recharts (CSS vars don't work in SVG fills reliably)
@@ -83,6 +84,7 @@ function ChartTooltip(props: TooltipProps<number, string>) {
 }
 
 export default function Progress() {
+  const { t, lang } = useTranslation()
   const [summary, setSummary] = useState<ProgressSummary | null>(null)
   const [weekly, setWeekly] = useState<WeeklyCount[]>([])
   const [bests, setBests] = useState<PersonalBest[]>([])
@@ -113,11 +115,13 @@ export default function Progress() {
     fetchExerciseTrend(selectedExercise).then(setTrend).catch(console.error)
   }, [selectedExercise])
 
+  const locale = lang === 'ru' ? 'ru-RU' : undefined
+
   const parseUTC = (dateStr: string) =>
     new Date(dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z')
 
   const formatTrendDate = (dateStr: string) => {
-    return parseUTC(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+    return parseUTC(dateStr).toLocaleDateString(locale, { month: 'short', day: 'numeric' })
   }
 
   if (loading) {
@@ -135,10 +139,10 @@ export default function Progress() {
       {/* Header */}
       <div>
         <h1 className="font-heading text-2xl font-bold tracking-tight">
-          Progress
+          {t('progress.title')}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Track your training over time
+          {t('progress.subtitle')}
         </p>
       </div>
 
@@ -147,26 +151,26 @@ export default function Progress() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <SummaryCard
             icon={<Zap className="h-4 w-4" />}
-            label="This Week"
+            label={t('progress.thisWeek')}
             value={summary.this_week}
             accent
           />
           <SummaryCard
             icon={<Activity className="h-4 w-4" />}
-            label="This Month"
+            label={t('progress.thisMonth')}
             value={summary.this_month}
           />
           <SummaryCard
             icon={<Dumbbell className="h-4 w-4" />}
-            label="Total Sessions"
+            label={t('progress.totalSessions')}
             value={summary.total_sessions}
           />
           <SummaryCard
             icon={<Weight className="h-4 w-4" />}
-            label="Total Volume"
+            label={t('progress.totalVolume')}
             value={summary.total_volume > 1000
-              ? `${(summary.total_volume / 1000).toFixed(1)}t`
-              : `${summary.total_volume}kg`
+              ? `${(summary.total_volume / 1000).toFixed(1)}${t('progress.tonnes')}`
+              : `${summary.total_volume}${t('kg')}`
             }
           />
         </div>
@@ -175,14 +179,13 @@ export default function Progress() {
       {/* Weekly frequency chart */}
       {weekly.length > 0 && (
         <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card p-5">
-          {/* Subtle glow behind chart */}
           <div className="pointer-events-none absolute -top-20 left-1/2 h-40 w-3/4 -translate-x-1/2 rounded-full bg-warm/[0.04] blur-3xl" />
           <div className="relative">
             <div className="mb-5 flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-warm/10">
                 <Flame className="h-3.5 w-3.5 text-warm" />
               </div>
-              <h2 className="font-heading text-base font-semibold">Workouts per Week</h2>
+              <h2 className="font-heading text-base font-semibold">{t('progress.workoutsPerWeek')}</h2>
             </div>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={weekly} barCategoryGap="20%">
@@ -221,7 +224,7 @@ export default function Progress() {
                   dataKey="count"
                   fill="url(#barGradient)"
                   radius={[6, 6, 2, 2]}
-                  name="Workouts"
+                  name={t('progress.workouts')}
                   maxBarSize={40}
                 />
               </BarChart>
@@ -239,12 +242,12 @@ export default function Progress() {
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-warm/10">
                 <TrendingUp className="h-3.5 w-3.5 text-warm" />
               </div>
-              <h2 className="font-heading text-base font-semibold">Exercise Trend</h2>
+              <h2 className="font-heading text-base font-semibold">{t('progress.exerciseTrend')}</h2>
             </div>
             <Select value={selectedExercise} onValueChange={(v) => v && setSelectedExercise(v)}>
               <SelectTrigger className="w-[200px]">
                 <span className="truncate">
-                  {bests.find((b) => b.exercise_id === selectedExercise)?.exercise_name || 'Select exercise'}
+                  {bests.find((b) => b.exercise_id === selectedExercise)?.exercise_name || t('progress.selectExercise')}
                 </span>
               </SelectTrigger>
               <SelectContent>
@@ -293,7 +296,7 @@ export default function Progress() {
                   stroke={CHART_COLORS.copper}
                   strokeWidth={1.5}
                   fill="url(#volumeGradient)"
-                  name="Volume"
+                  name={t('progress.volume')}
                   dot={false}
                   activeDot={{ r: 4, fill: CHART_COLORS.copper, strokeWidth: 0 }}
                 />
@@ -303,7 +306,7 @@ export default function Progress() {
                   stroke={CHART_COLORS.amber}
                   strokeWidth={2.5}
                   fill="url(#weightGradient)"
-                  name="Max Weight (kg)"
+                  name={t('progress.maxWeight')}
                   dot={{
                     r: 4,
                     fill: CHART_COLORS.amber,
@@ -323,8 +326,8 @@ export default function Progress() {
           ) : (
             <div className="flex items-center justify-center py-16 text-sm text-muted-foreground">
               {selectedExercise
-                ? 'No data yet for this exercise'
-                : 'Select an exercise to see trends'}
+                ? t('progress.noDataExercise')
+                : t('progress.selectToSeeTrends')}
             </div>
           )}
         </div>
@@ -339,7 +342,7 @@ export default function Progress() {
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-warm/10">
                 <Trophy className="h-3.5 w-3.5 text-warm" />
               </div>
-              <h2 className="font-heading text-base font-semibold">Personal Bests</h2>
+              <h2 className="font-heading text-base font-semibold">{t('progress.personalBests')}</h2>
             </div>
             <div className="space-y-1">
               {bests.map((b, i) => (
@@ -358,14 +361,14 @@ export default function Progress() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold tabular-nums text-warm">
-                      {b.weight}<span className="text-xs font-medium text-warm/60">kg</span>
+                      {b.weight}<span className="text-xs font-medium text-warm/60">{t('kg')}</span>
                       {' '}
                       <span className="text-muted-foreground">×</span>
                       {' '}
                       {b.reps}
                     </p>
                     <p className="text-[11px] text-muted-foreground">
-                      {parseUTC(b.date).toLocaleDateString(undefined, {
+                      {parseUTC(b.date).toLocaleDateString(locale, {
                         month: 'short',
                         day: 'numeric',
                       })}
@@ -383,7 +386,7 @@ export default function Progress() {
         <div className="rounded-2xl border border-border/50 bg-card p-12 text-center">
           <TrendingUp className="mx-auto h-8 w-8 text-muted-foreground/40" />
           <p className="mt-3 text-sm text-muted-foreground">
-            Complete some workouts to see your progress here.
+            {t('progress.completeToSee')}
           </p>
         </div>
       ) : null}

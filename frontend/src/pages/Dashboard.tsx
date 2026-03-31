@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,7 @@ interface DashboardProps {
 
 export default function Dashboard({ onNavigate, onStartSession }: DashboardProps) {
   const { user } = useAuth()
+  const { t } = useTranslation()
   const [routinePickerOpen, setRoutinePickerOpen] = useState(false)
   const [routines, setRoutines] = useState<Routine[]>([])
   const [starting, setStarting] = useState(false)
@@ -56,7 +58,7 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
       {/* Greeting */}
       <div>
         <h1 className="font-heading text-2xl font-bold tracking-tight">
-          Ready to train
+          {t('dashboard.readyToTrain')}
           <Flame className="ml-2 inline-block h-6 w-6 text-warm" />
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -76,12 +78,12 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/15">
               <Play className="h-5 w-5 text-warm" />
             </div>
-            <h3 className="mt-4 font-heading text-lg font-semibold">Start Workout</h3>
+            <h3 className="mt-4 font-heading text-lg font-semibold">{t('dashboard.startWorkout')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Pick a routine and start training
+              {t('dashboard.pickRoutine')}
             </p>
             <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
-              Choose routine
+              {t('dashboard.chooseRoutine')}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
@@ -97,12 +99,12 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/10">
               <Zap className="h-5 w-5 text-warm" />
             </div>
-            <h3 className="mt-4 font-heading text-lg font-semibold">Quick Start</h3>
+            <h3 className="mt-4 font-heading text-lg font-semibold">{t('dashboard.quickStart')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Empty session — add exercises as you go
+              {t('dashboard.emptySession')}
             </p>
             <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
-              Start empty
+              {t('dashboard.startEmpty')}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
@@ -120,12 +122,12 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/10">
               <Dumbbell className="h-5 w-5 text-warm" />
             </div>
-            <h3 className="mt-4 font-heading text-lg font-semibold">Exercise Library</h3>
+            <h3 className="mt-4 font-heading text-lg font-semibold">{t('dashboard.exerciseLibrary')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Browse, search, and add exercises
+              {t('dashboard.browseExercises')}
             </p>
             <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
-              Browse exercises
+              {t('dashboard.browseExercisesBtn')}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
@@ -140,12 +142,12 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/10">
               <ClipboardList className="h-5 w-5 text-warm" />
             </div>
-            <h3 className="mt-4 font-heading text-lg font-semibold">My Routines</h3>
+            <h3 className="mt-4 font-heading text-lg font-semibold">{t('dashboard.myRoutines')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Create and manage workout routines
+              {t('dashboard.createManageRoutines')}
             </p>
             <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
-              View routines
+              {t('dashboard.viewRoutines')}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
@@ -160,12 +162,12 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/10">
               <Clock className="h-5 w-5 text-warm" />
             </div>
-            <h3 className="mt-4 font-heading text-lg font-semibold">History</h3>
+            <h3 className="mt-4 font-heading text-lg font-semibold">{t('dashboard.history')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              View past workouts and repeat them
+              {t('dashboard.viewPastWorkouts')}
             </p>
             <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
-              View history
+              {t('dashboard.viewHistory')}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
@@ -180,12 +182,12 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warm/10">
               <TrendingUp className="h-5 w-5 text-warm" />
             </div>
-            <h3 className="mt-4 font-heading text-lg font-semibold">Progress</h3>
+            <h3 className="mt-4 font-heading text-lg font-semibold">{t('dashboard.progress')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Charts, trends, and personal bests
+              {t('dashboard.chartsTrends')}
             </p>
             <div className="mt-4 flex items-center gap-1 text-sm font-medium text-warm">
-              View progress
+              {t('dashboard.viewProgress')}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
@@ -196,13 +198,13 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
       <Dialog open={routinePickerOpen} onOpenChange={setRoutinePickerOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Choose a Routine</DialogTitle>
+            <DialogTitle>{t('dashboard.chooseRoutineTitle')}</DialogTitle>
           </DialogHeader>
           <ScrollArea className="h-[350px]">
             <div className="space-y-1">
               {routines.length === 0 ? (
                 <p className="py-8 text-center text-sm text-muted-foreground">
-                  No routines yet. Create one first!
+                  {t('dashboard.noRoutinesYet')}
                 </p>
               ) : (
                 routines.map((routine) => (
@@ -217,12 +219,12 @@ export default function Dashboard({ onNavigate, onStartSession }: DashboardProps
                         <p className="text-sm font-medium">{routine.name}</p>
                         {routine.is_template && (
                           <span className="rounded-md bg-warm/10 px-1.5 py-0.5 text-[11px] font-medium text-warm ring-1 ring-inset ring-warm/20">
-                            Template
+                            {t('template')}
                           </span>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {routine.routine_exercises.length} exercises
+                        {routine.routine_exercises.length} {t('exercises')}
                       </p>
                     </div>
                     <Play className="h-4 w-4 text-warm" />

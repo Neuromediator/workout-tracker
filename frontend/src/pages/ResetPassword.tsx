@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useTranslation } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dumbbell, CheckCircle2 } from 'lucide-react'
@@ -9,6 +10,7 @@ interface ResetPasswordProps {
 }
 
 export default function ResetPassword({ onDone }: ResetPasswordProps) {
+  const { t } = useTranslation()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
@@ -20,7 +22,7 @@ export default function ResetPassword({ onDone }: ResetPasswordProps) {
     setError('')
 
     if (password !== confirm) {
-      setError('Passwords do not match')
+      setError(t('reset.mismatch'))
       return
     }
 
@@ -43,14 +45,14 @@ export default function ResetPassword({ onDone }: ResetPasswordProps) {
               <CheckCircle2 className="h-7 w-7 text-emerald-500" />
             </div>
             <h1 className="font-heading text-2xl font-bold tracking-tight">
-              Password updated
+              {t('reset.success')}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Your password has been changed successfully.
+              {t('reset.successMessage')}
             </p>
           </div>
           <Button className="w-full" onClick={onDone}>
-            Continue to app
+            {t('reset.continue')}
           </Button>
         </div>
       </div>
@@ -66,10 +68,10 @@ export default function ResetPassword({ onDone }: ResetPasswordProps) {
           </div>
           <div className="text-center">
             <h1 className="font-heading text-2xl font-bold tracking-tight">
-              Set new password
+              {t('reset.title')}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Enter your new password below
+              {t('reset.description')}
             </p>
           </div>
         </div>
@@ -77,7 +79,7 @@ export default function ResetPassword({ onDone }: ResetPasswordProps) {
         <form onSubmit={handleSubmit} className="space-y-3">
           <Input
             type="password"
-            placeholder="New password"
+            placeholder={t('reset.newPassword')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -85,7 +87,7 @@ export default function ResetPassword({ onDone }: ResetPasswordProps) {
           />
           <Input
             type="password"
-            placeholder="Confirm new password"
+            placeholder={t('reset.confirmPassword')}
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
@@ -99,7 +101,7 @@ export default function ResetPassword({ onDone }: ResetPasswordProps) {
           )}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Updating...' : 'Update Password'}
+            {loading ? t('reset.updating') : t('reset.update')}
           </Button>
         </form>
       </div>

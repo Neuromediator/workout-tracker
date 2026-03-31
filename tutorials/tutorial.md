@@ -3980,3 +3980,241 @@ workout-tracker/
 └── frontend/
     └── .env.example        # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
 ```
+
+---
+
+# Phase 7: Auth UX + Локализация
+
+## Обзор
+
+В этой фазе реализованы три улучшения UX и поддержка двух языков (RU/EN).
+
+---
+
+## 1. Подтверждение регистрации
+
+**Проблема:** После нажатия Sign Up пользователь ничего не видел и не знал, что нужно подтвердить email.
+
+**Решение:** После успешного `supabase.auth.signUp()` приложение переходит на экран-заглушку "Проверьте почту":
+
+```tsx
+// frontend/src/pages/Login.tsx
+if (isSignUp) {
+  const { error } = await supabase.auth.signUp({ email, password })
+  if (error) {
+    setError(error.message)
+  } else {
+    setSignUpSuccess(true)  // показываем экран подтверждения
+  }
+}
+
+// Экран подтверждения
+if (signUpSuccess) {
+  return (
+    <div>
+      <Mail />
+      <h1>Проверьте почту</h1>
+      <p>Мы отправили ссылку на {email}. Нажмите на неё для активации.</p>
+      <Button onClick={() => setSignUpSuccess(false)}>Назад</Button>
+    </div>
+  )
+}
+```
+
+---
+
+## 2. Восстановление пароля
+
+**Архитектура:**
+
+```
+Пользователь → "Забыли пароль?" → вводит email
+→ supabase.auth.resetPasswordForEmail(email, { redirectTo: origin + '/reset-password' })
+→ Supabase отправляет письмо со ссылкой
+→ Пользователь кликает → переходит на /reset-password#access_token=...&type=recovery
+→ Supabase автоматически логинит пользователя + вызывает PASSWORD_RECOVERY событие
+→ Приложение показывает форму нового пароля
+→ supabase.auth.updateUser({ password }) → пароль обновлён
+```
+
+**Обнаружение события восстановления (`useAuth.ts`):**
+
+```ts
+// Инициализация: проверяем URL hash при загрузке страницы
+const [isPasswordRecovery, setIsPasswordRecovery] = useState(
+  window.location.hash.includes('type=recovery')
+)
+
+// Слушаем события Supabase
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    setIsPasswordRecovery(true)
+  }
+  // Supabase может выстрелить SIGNED_IN вместо PASSWORD_RECOVERY
+  if (event === 'SIGNED_IN' && window.location.hash.includes('type=recovery')) {
+    setIsPasswordRecovery(true)
+  }
+  setSession(session)
+  setUser(session?.user ?? null)
+})
+```
+
+**Показ формы нового пароля (`App.tsx`):**
+
+```tsx
+if (isPasswordRecovery && user) {
+  return (
+    <ResetPassword
+      onDone={() => {
+        clearPasswordRecovery()
+        window.history.replaceState(null, '', '/')
+      }}
+    />
+  )
+}
+```
+
+**Настройка Supabase (обязательно!):**
+- Dashboard → Authentication → URL Configuration
+- Redirect URLs: добавить `https://myfitnesspal.online/reset-password`
+- Site URL: `https://myfitnesspal.online`
+
+---
+
+## 3. Очистка истории AI-чата
+
+Кнопка с иконкой корзины в шапке AI-сайдбара:
+
+```tsx
+// frontend/src/features/ai-sidebar/AISidebar.tsx
+const handleClearChat = () => {
+  setMessages([makeGreeting(t)])   // сброс к приветствию
+  localStorage.removeItem(STORAGE_KEY)
+}
+
+// В шапке сайдбара:
+<button onClick={handleClearChat} title={t('ai.clearHistory')}>
+  <Trash2 className="h-4 w-4" />
+</button>
+```
+
+---
+
+## 4. Локализация (RU/EN)
+
+### Архитектура
+
+**Файл переводов:** `frontend/src/lib/i18n.tsx`
+
+```tsx
+// Словарь ~130 строк
+const translations: Record<string, { en: string; ru: string }> = {
+  'nav.home':         { en: 'Home',      ru: 'Главная' },
+  'login.signIn':     { en: 'Sign In',   ru: 'Войти' },
+  'session.addSet':   { en: 'Add Set',   ru: 'Добавить подход' },
+  // ...
+}
+
+// Контекст
+export function I18nProvider({ children }) {
+  const [lang, setLang] = useState(() => localStorage.getItem('app-language') || 'en')
+
+  const t = (key: string) => translations[key]?.[lang] ?? key
+
+  return <I18nContext.Provider value={{ lang, setLang, t }}>{children}</I18nContext.Provider>
+}
+
+export function useTranslation() {
+  return useContext(I18nContext)
+}
+```
+
+**Подключение в `main.tsx`:**
+
+```tsx
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <I18nProvider>
+      <App />
+    </I18nProvider>
+  </StrictMode>
+)
+```
+
+**Использование в компонентах:**
+
+```tsx
+const { t, lang, setLang } = useTranslation()
+
+// Текст
+<h1>{t('progress.title')}</h1>
+
+// Placeholder
+<Input placeholder={t('exercises.searchPlaceholder')} />
+
+// Локаль для дат
+const locale = lang === 'ru' ? 'ru-RU' : undefined
+date.toLocaleDateString(locale, { month: 'short', day: 'numeric' })
+```
+
+**Переключатель языка:**
+
+```tsx
+// В шапке (App.tsx) — для залогиненных пользователей
+<button onClick={() => setLang(lang === 'en' ? 'ru' : 'en')}>
+  {lang === 'en' ? 'RU' : 'EN'}
+</button>
+
+// На странице логина — фиксированная позиция top-right
+const langToggle = (
+  <button
+    onClick={() => setLang(lang === 'en' ? 'ru' : 'en')}
+    className="fixed top-4 right-4 ..."
+  >
+    {lang === 'en' ? 'RU' : 'EN'}
+  </button>
+)
+```
+
+### Приветствие AI на правильном языке
+
+Приветствие хранится в localStorage с фиксированным `id: 'greeting'`. При рендере используем `t()` вместо сохранённого текста:
+
+```tsx
+// Всегда отображаем в текущем языке
+{msg.id === 'greeting' ? t('ai.greeting') : msg.content}
+```
+
+### Файловая структура
+
+```
+frontend/src/
+├── lib/
+│   └── i18n.tsx          # I18nProvider, useTranslation, словарь
+├── pages/
+│   ├── Login.tsx          # + langToggle, все строки через t()
+│   ├── ResetPassword.tsx  # Новая страница смены пароля
+│   └── ...                # Все страницы переведены
+├── hooks/
+│   └── useAuth.ts         # + isPasswordRecovery, clearPasswordRecovery
+└── features/
+    └── ai-sidebar/
+        └── AISidebar.tsx  # + кнопка очистки, строки через t()
+```
+
+---
+
+## Деплой Phase 7
+
+```bash
+# Локально
+git add -A
+git commit -m "Phase 7: auth UX improvements and RU/EN localization"
+git push
+
+# На сервере
+ssh -i "C:/Users/LENOVO/Downloads/ssh-key-2026-03-29.key" ubuntu@92.5.0.166
+cd ~/workout-tracker
+git pull
+docker compose up --build -d
+```

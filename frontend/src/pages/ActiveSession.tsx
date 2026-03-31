@@ -23,6 +23,7 @@ import {
   completeSession,
   type WorkoutSession,
 } from '@/api/sessions'
+import { useTranslation } from '@/lib/i18n'
 import {
   Plus,
   Check,
@@ -41,7 +42,18 @@ interface ActiveSessionProps {
 
 const MUSCLE_GROUPS = ['all', 'chest', 'back', 'legs', 'shoulders', 'arms', 'core']
 
+const MUSCLE_GROUP_KEYS: Record<string, string> = {
+  all: 'exercises.all',
+  chest: 'exercises.chest',
+  back: 'exercises.back',
+  legs: 'exercises.legs',
+  shoulders: 'exercises.shoulders',
+  arms: 'exercises.arms',
+  core: 'exercises.core',
+}
+
 export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveSessionProps) {
+  const { t } = useTranslation()
   const [session, setSession] = useState<WorkoutSession | null>(null)
   const [exercises, setExercises] = useState<Record<string, Exercise>>({})
   const [loading, setLoading] = useState(true)
@@ -82,7 +94,6 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
   // Timer
   useEffect(() => {
     if (!session) return
-    // Ensure UTC parsing — append Z if backend doesn't include timezone
     const raw = session.started_at
     const startTime = new Date(raw.endsWith('Z') || raw.includes('+') ? raw : raw + 'Z').getTime()
     const tick = () => setElapsed(Math.floor((Date.now() - startTime) / 1000))
@@ -126,7 +137,6 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
       setPickerOpen(false)
       setPickerSearch('')
       setPickerMuscle('all')
-      // Expand newly added exercise
       const newEx = updated.exercises[updated.exercises.length - 1]
       if (newEx) setExpandedExercise(newEx.id)
     } catch (err) {
@@ -194,7 +204,7 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div className="min-w-0 flex-1">
-          <h2 className="font-heading text-xl font-bold tracking-tight">Active Workout</h2>
+          <h2 className="font-heading text-xl font-bold tracking-tight">{t('session.activeWorkout')}</h2>
         </div>
       </div>
 
@@ -207,12 +217,12 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
         <div className="h-4 w-px bg-border/50" />
         <div className="text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{completedSetsCount}</span>
-          <span className="text-muted-foreground">/{totalSetsCount} sets</span>
+          <span className="text-muted-foreground">/{totalSetsCount} {t('sets')}</span>
         </div>
         <div className="h-4 w-px bg-border/50" />
         <div className="text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{session.exercises.length}</span>
-          {' '}exercises
+          {' '}{t('exercises')}
         </div>
       </div>
 
@@ -238,7 +248,7 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium">{exercise?.name || 'Unknown'}</p>
+                      <p className="text-sm font-medium">{exercise?.name || t('session.unknown')}</p>
                       <span className="text-xs text-muted-foreground">
                         {filledSets}/{sortedSets.length}
                       </span>
@@ -271,16 +281,16 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
                     {/* Header row */}
                     <div className="mb-2 grid grid-cols-[2.5rem_1fr_1fr_1fr_2.5rem] gap-2 px-1">
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                        Set
+                        {t('session.set')}
                       </span>
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                        Weight
+                        {t('session.weight')}
                       </span>
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                        Reps
+                        {t('session.reps')}
                       </span>
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                        Rest
+                        {t('session.rest')}
                       </span>
                       <span />
                     </div>
@@ -307,7 +317,7 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
                       onClick={() => handleAddSet(se.id, sortedSets.length)}
                       className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                     >
-                      <Plus className="h-3 w-3" /> Add Set
+                      <Plus className="h-3 w-3" /> {t('session.addSet')}
                     </button>
                   </div>
                 )}
@@ -323,17 +333,17 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
           onClick={() => setPickerOpen(true)}
           className="w-full border-dashed border-border/50 text-muted-foreground hover:border-warm/30 hover:text-warm"
         >
-          <Plus className="mr-1 h-4 w-4" /> Add Exercise
+          <Plus className="mr-1 h-4 w-4" /> {t('session.addExercise')}
         </Button>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add Exercise</DialogTitle>
+            <DialogTitle>{t('session.addExercise')}</DialogTitle>
           </DialogHeader>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search..."
+                placeholder={t('session.searchExercises')}
                 value={pickerSearch}
                 onChange={(e) => setPickerSearch(e.target.value)}
                 className="pl-9"
@@ -346,7 +356,7 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
               <SelectContent>
                 {MUSCLE_GROUPS.map((g) => (
                   <SelectItem key={g} value={g}>
-                    {g === 'all' ? 'All' : g.charAt(0).toUpperCase() + g.slice(1)}
+                    {t(MUSCLE_GROUP_KEYS[g])}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -378,9 +388,9 @@ export default function ActiveSession({ sessionId, onComplete, onBack }: ActiveS
         disabled={completing}
         className="w-full bg-warm text-warm-foreground hover:bg-warm/90"
       >
-        {completing ? 'Finishing...' : (
+        {completing ? t('session.finishing') : (
           <>
-            <Check className="mr-1 h-4 w-4" /> Finish Workout
+            <Check className="mr-1 h-4 w-4" /> {t('session.finishWorkout')}
           </>
         )}
       </Button>
@@ -405,6 +415,7 @@ function SetRow({
   isLogged: boolean
   onLog: (reps: number, weight: number, restSeconds: number) => void
 }) {
+  const { t } = useTranslation()
   const [weight, setWeight] = useState(initialWeight.toString())
   const [reps, setReps] = useState(initialReps.toString())
   const [rest, setRest] = useState(initialRest > 0 ? initialRest.toString() : '')
@@ -441,7 +452,7 @@ function SetRow({
           setWeight(e.target.value)
           setSaved(false)
         }}
-        placeholder="kg"
+        placeholder={t('kg')}
         className="h-8 text-center text-sm"
       />
       <Input
@@ -463,7 +474,7 @@ function SetRow({
           setRest(e.target.value)
           setSaved(false)
         }}
-        placeholder="sec"
+        placeholder={t('sec')}
         className="h-8 text-center text-sm"
       />
       <button

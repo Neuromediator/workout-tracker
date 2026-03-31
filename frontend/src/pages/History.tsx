@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 import { fetchSessions, createSession, deleteSession, type WorkoutSession } from '@/api/sessions'
 import { fetchExercises, type Exercise } from '@/api/exercises'
 import {
@@ -17,6 +18,7 @@ interface HistoryProps {
 }
 
 export default function History({ onStartSession }: HistoryProps) {
+  const { t, lang } = useTranslation()
   const [sessions, setSessions] = useState<WorkoutSession[]>([])
   const [exercises, setExercises] = useState<Record<string, Exercise>>({})
   const [loading, setLoading] = useState(true)
@@ -27,7 +29,6 @@ export default function History({ onStartSession }: HistoryProps) {
   useEffect(() => {
     Promise.all([fetchSessions(), fetchExercises()])
       .then(([sessionData, exerciseData]) => {
-        // Only completed sessions
         setSessions(sessionData.filter((s) => s.completed_at))
         const map: Record<string, Exercise> = {}
         for (const e of exerciseData) map[e.id] = e
@@ -38,7 +39,7 @@ export default function History({ onStartSession }: HistoryProps) {
   }, [])
 
   const handleDelete = async (sessionId: string) => {
-    if (!confirm('Delete this workout from history?')) return
+    if (!confirm(t('history.deleteConfirm'))) return
     setDeleting(sessionId)
     try {
       await deleteSession(sessionId)
@@ -62,7 +63,7 @@ export default function History({ onStartSession }: HistoryProps) {
           sets: se.sets.map((s) => ({
             set_number: s.set_number,
             reps: 0,
-            weight: s.weight, // pre-fill last weight
+            weight: s.weight,
           })),
         })),
       })
@@ -74,9 +75,11 @@ export default function History({ onStartSession }: HistoryProps) {
     }
   }
 
+  const locale = lang === 'ru' ? 'ru-RU' : undefined
+
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z')
-    return d.toLocaleDateString(undefined, {
+    return d.toLocaleDateString(locale, {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
@@ -85,7 +88,7 @@ export default function History({ onStartSession }: HistoryProps) {
 
   const formatTime = (dateStr: string) => {
     const d = new Date(dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z')
-    return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+    return d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
   }
 
   const getDuration = (start: string, end: string | null) => {
@@ -109,10 +112,10 @@ export default function History({ onStartSession }: HistoryProps) {
     <div className="space-y-6">
       <div>
         <h1 className="font-heading text-2xl font-bold tracking-tight">
-          Workout History
+          {t('history.title')}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {sessions.length} completed workout{sessions.length !== 1 ? 's' : ''}
+          {sessions.length} {sessions.length === 1 ? t('history.completedWorkout') : t('history.workouts')}
         </p>
       </div>
 
@@ -120,7 +123,7 @@ export default function History({ onStartSession }: HistoryProps) {
         <div className="rounded-xl border border-border/50 bg-card p-12 text-center">
           <Dumbbell className="mx-auto h-8 w-8 text-muted-foreground/40" />
           <p className="mt-3 text-sm text-muted-foreground">
-            No completed workouts yet. Finish a session to see it here.
+            {t('history.noWorkouts')}
           </p>
         </div>
       ) : (
@@ -156,8 +159,8 @@ export default function History({ onStartSession }: HistoryProps) {
                         <Clock className="h-3 w-3" />
                         {getDuration(s.started_at, s.completed_at)}
                       </span>
-                      <span>{totalExercises} exercises</span>
-                      <span>{totalSets} sets</span>
+                      <span>{totalExercises} {t('exercises')}</span>
+                      <span>{totalSets} {t('sets')}</span>
                     </div>
                   </div>
                   {isExpanded ? (
@@ -183,7 +186,7 @@ export default function History({ onStartSession }: HistoryProps) {
                             <div key={se.id}>
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">
-                                  {exercise?.name || 'Unknown'}
+                                  {exercise?.name || t('session.unknown')}
                                 </p>
                                 {exercise && (
                                   <span className="text-xs text-muted-foreground">
@@ -198,15 +201,15 @@ export default function History({ onStartSession }: HistoryProps) {
                                       key={set.id}
                                       className="rounded-md bg-warm/10 px-2 py-0.5 text-xs font-medium text-warm"
                                     >
-                                      {set.weight > 0 ? `${set.weight}kg × ` : ''}
-                                      {set.reps} reps
-                                      {set.rest_seconds > 0 ? ` · ${set.rest_seconds}s rest` : ''}
+                                      {set.weight > 0 ? `${set.weight}${t('kg')} × ` : ''}
+                                      {set.reps} {t('session.reps')}
+                                      {set.rest_seconds > 0 ? ` · ${set.rest_seconds}${t('sec')}` : ''}
                                     </span>
                                   ))}
                                 </div>
                               ) : (
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                  No sets logged
+                                  {t('history.noSetsLogged')}
                                 </p>
                               )}
                             </div>
@@ -232,7 +235,7 @@ export default function History({ onStartSession }: HistoryProps) {
                         disabled={reusing === s.id}
                       >
                         <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
-                        {reusing === s.id ? 'Starting...' : 'Repeat This Workout'}
+                        {reusing === s.id ? t('history.starting') : t('history.repeatWorkout')}
                       </Button>
                       <Button
                         variant="outline"

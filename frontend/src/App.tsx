@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 import Login from '@/pages/Login'
 import ResetPassword from '@/pages/ResetPassword'
 import Dashboard from '@/pages/Dashboard'
@@ -16,6 +17,7 @@ type Page = 'dashboard' | 'exercises' | 'routines' | 'routine-builder' | 'active
 
 export default function App() {
   const { user, loading, signOut, isPasswordRecovery, clearPasswordRecovery } = useAuth()
+  const { lang, setLang, t } = useTranslation()
   const [page, setPage] = useState<Page>('dashboard')
   const [editRoutineId, setEditRoutineId] = useState<string | null>(null)
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
@@ -26,7 +28,7 @@ export default function App() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="flex items-center gap-3">
           <Dumbbell className="h-6 w-6 animate-pulse text-warm" />
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     )
@@ -52,12 +54,12 @@ export default function App() {
     setPage('active-session')
   }
 
-  const navItems: { page: Page | Page[]; icon: typeof Home; label: string; target: Page }[] = [
-    { page: ['dashboard'], icon: Home, label: 'Home', target: 'dashboard' },
-    { page: ['exercises'], icon: Dumbbell, label: 'Exercises', target: 'exercises' },
-    { page: ['routines', 'routine-builder'], icon: ClipboardList, label: 'Routines', target: 'routines' },
-    { page: ['history'], icon: Clock, label: 'History', target: 'history' },
-    { page: ['progress'], icon: TrendingUp, label: 'Progress', target: 'progress' },
+  const navItems: { page: Page | Page[]; icon: typeof Home; labelKey: string; target: Page }[] = [
+    { page: ['dashboard'], icon: Home, labelKey: 'nav.home', target: 'dashboard' },
+    { page: ['exercises'], icon: Dumbbell, labelKey: 'nav.exercises', target: 'exercises' },
+    { page: ['routines', 'routine-builder'], icon: ClipboardList, labelKey: 'nav.routines', target: 'routines' },
+    { page: ['history'], icon: Clock, labelKey: 'nav.history', target: 'history' },
+    { page: ['progress'], icon: TrendingUp, labelKey: 'nav.progress', target: 'progress' },
   ]
 
   return (
@@ -74,12 +76,12 @@ export default function App() {
                 <Dumbbell className="h-4 w-4 text-warm" />
               </div>
               <span className="font-heading text-lg font-semibold tracking-tight">
-                Workout Tracker
+                {t('app.title')}
               </span>
             </button>
 
             <nav className="flex items-center gap-0.5">
-              {navItems.map(({ page: pages, icon: Icon, label, target }) => {
+              {navItems.map(({ page: pages, icon: Icon, labelKey, target }) => {
                 const isActive = Array.isArray(pages)
                   ? pages.includes(page)
                   : page === pages
@@ -94,7 +96,7 @@ export default function App() {
                     }`}
                   >
                     <Icon className="h-4 w-4" />
-                    <span className="hidden sm:inline">{label}</span>
+                    <span className="hidden sm:inline">{t(labelKey)}</span>
                   </button>
                 )
               })}
@@ -102,9 +104,17 @@ export default function App() {
               <div className="ml-1.5 h-5 w-px bg-border/50" />
 
               <button
+                onClick={() => setLang(lang === 'en' ? 'ru' : 'en')}
+                className="rounded-lg px-2 py-1.5 text-xs font-bold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                title={lang === 'en' ? 'Переключить на русский' : 'Switch to English'}
+              >
+                {lang === 'en' ? 'RU' : 'EN'}
+              </button>
+
+              <button
                 onClick={signOut}
                 className="flex items-center rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-destructive"
-                title="Sign out"
+                title={t('nav.signOut')}
               >
                 <LogOut className="h-4 w-4" />
               </button>
