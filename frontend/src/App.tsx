@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import Login from '@/pages/Login'
+import ResetPassword from '@/pages/ResetPassword'
 import Dashboard from '@/pages/Dashboard'
 import Exercises from '@/pages/Exercises'
 import Routines from '@/pages/Routines'
@@ -14,7 +15,7 @@ import { Dumbbell, Home, ClipboardList, LogOut, Clock, TrendingUp } from 'lucide
 type Page = 'dashboard' | 'exercises' | 'routines' | 'routine-builder' | 'active-session' | 'history' | 'progress'
 
 export default function App() {
-  const { user, loading, signOut } = useAuth()
+  const { user, loading, signOut, isPasswordRecovery, clearPasswordRecovery } = useAuth()
   const [page, setPage] = useState<Page>('dashboard')
   const [editRoutineId, setEditRoutineId] = useState<string | null>(null)
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
@@ -28,6 +29,17 @@ export default function App() {
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
+    )
+  }
+
+  if (isPasswordRecovery && user) {
+    return (
+      <ResetPassword
+        onDone={() => {
+          clearPasswordRecovery()
+          window.history.replaceState(null, '', '/')
+        }}
+      />
     )
   }
 

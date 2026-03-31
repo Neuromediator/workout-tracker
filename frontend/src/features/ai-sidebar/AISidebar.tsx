@@ -25,6 +25,7 @@ import {
   Settings,
   Sparkles,
   X,
+  Trash2,
 } from 'lucide-react'
 
 interface Message {
@@ -89,6 +90,11 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
       setTimeout(() => inputRef.current?.focus(), 100)
     }
   }, [open])
+
+  const handleClearChat = () => {
+    setMessages([GREETING])
+    localStorage.removeItem(STORAGE_KEY)
+  }
 
   const handleToggleAI = async () => {
     setToggling(true)
@@ -214,6 +220,13 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
           <span className="font-heading text-sm font-semibold">AI Assistant</span>
         </div>
         <div className="flex items-center gap-0.5">
+          <button
+            onClick={handleClearChat}
+            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive"
+            title="Clear chat history"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
           <button
             onClick={() => setShowSettings(!showSettings)}
             className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
