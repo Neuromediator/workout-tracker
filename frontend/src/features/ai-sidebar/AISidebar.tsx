@@ -15,6 +15,7 @@ import {
   type ChatMessage,
   type AIAction,
 } from '@/api/ai'
+import { useTranslation } from '@/lib/i18n'
 import {
   Bot,
   Send,
@@ -37,15 +38,17 @@ interface Message {
   pending?: boolean
 }
 
-const GREETING: Message = {
-  id: 'greeting',
-  role: 'assistant',
-  content: "Hey! How's your day going? I'm your workout assistant — I can create sessions, look up your history, or help plan your next workout. What can I do for you?",
-}
-
 const STORAGE_KEY = 'ai-chat-messages'
 
-function loadMessages(): Message[] {
+function makeGreeting(t: (key: string) => string): Message {
+  return {
+    id: 'greeting',
+    role: 'assistant',
+    content: t('ai.greeting'),
+  }
+}
+
+function loadMessages(t: (key: string) => string): Message[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored) {
@@ -55,7 +58,7 @@ function loadMessages(): Message[] {
   } catch {
     // ignore
   }
-  return [GREETING]
+  return [makeGreeting(t)]
 }
 
 interface AISidebarProps {
@@ -64,8 +67,9 @@ interface AISidebarProps {
 }
 
 export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISidebarProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>(loadMessages)
+  const [messages, setMessages] = useState<Message[]>(() => loadMessages(t))
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [aiEnabled, setAiEnabled] = useState(true)
@@ -92,7 +96,7 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
   }, [open])
 
   const handleClearChat = () => {
-    setMessages([GREETING])
+    setMessages([makeGreeting(t)])
     localStorage.removeItem(STORAGE_KEY)
   }
 
@@ -209,6 +213,12 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
     )
   }
 
+  const suggestions = [
+    t('ai.suggestion1'),
+    t('ai.suggestion2'),
+    t('ai.suggestion3'),
+  ]
+
   const chatContent = (
     <div className="flex h-full flex-col">
       {/* Header with settings */}
@@ -217,13 +227,13 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-warm/10">
             <Sparkles className="h-3.5 w-3.5 text-warm" />
           </div>
-          <span className="font-heading text-sm font-semibold">AI Assistant</span>
+          <span className="font-heading text-sm font-semibold">{t('ai.title')}</span>
         </div>
         <div className="flex items-center gap-0.5">
           <button
             onClick={handleClearChat}
             className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive"
-            title="Clear chat history"
+            title={t('ai.clearHistory')}
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -247,9 +257,9 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
         <div className="border-b border-border/50 px-4 py-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">AI Features</p>
+              <p className="text-sm font-medium">{t('ai.features')}</p>
               <p className="text-xs text-muted-foreground">
-                {aiEnabled ? 'AI assistant is active' : 'AI assistant is disabled'}
+                {aiEnabled ? t('ai.active') : t('ai.disabled')}
               </p>
             </div>
             <button
@@ -284,7 +294,7 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
                         : 'bg-secondary text-foreground'
                     }`}
                   >
-                    {msg.content}
+                    {msg.id === 'greeting' ? t('ai.greeting') : msg.content}
                   </div>
                 </div>
 
@@ -293,10 +303,10 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
                   <div className="mt-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
                     <div className="flex items-center gap-2 text-xs font-medium text-amber-400">
                       <AlertTriangle className="h-3.5 w-3.5" />
-                      Confirmation required
+                      {t('ai.confirmRequired')}
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      This will {msg.action.type.replace('_', ' ')}
+                      {t('ai.thisWill')} {msg.action.type.replace('_', ' ')}
                       {msg.action.session_id
                         ? ` (${msg.action.session_id.slice(0, 8)}...)`
                         : ''}
@@ -309,7 +319,7 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
                         disabled={sending}
                       >
                         <CheckCircle2 className="mr-1 h-3 w-3" />
-                        Confirm
+                        {t('ai.confirm')}
                       </Button>
                       <Button
                         variant="outline"
@@ -319,7 +329,7 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
                         disabled={sending}
                       >
                         <XCircle className="mr-1 h-3 w-3" />
-                        Cancel
+                        {t('ai.cancel')}
                       </Button>
                     </div>
                   </div>
@@ -346,18 +356,14 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
               <div className="flex justify-start">
                 <div className="flex items-center gap-2 rounded-xl bg-secondary px-3 py-2 text-sm text-muted-foreground">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Thinking...
+                  {t('ai.thinking')}
                 </div>
               </div>
             )}
             {/* Quick suggestions after greeting */}
             {messages.length === 1 && messages[0].id === 'greeting' && (
               <div className="space-y-1.5 pt-1">
-                {[
-                  'Create a push day workout',
-                  'Start a leg session with squats',
-                  'What did I do last workout?',
-                ].map((suggestion) => (
+                {suggestions.map((suggestion) => (
                   <button
                     key={suggestion}
                     onClick={() => {
@@ -379,7 +385,7 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
       <div className="border-t border-border/50 p-3">
         {!aiEnabled ? (
           <p className="text-center text-xs text-muted-foreground">
-            AI is disabled. Enable it in settings above.
+            {t('ai.isDisabled')}
           </p>
         ) : (
           <form
@@ -393,7 +399,7 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about your workouts..."
+              placeholder={t('ai.placeholder')}
               className="flex-1 rounded-lg border border-border/50 bg-secondary/50 px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-warm/30 focus:ring-1 focus:ring-warm/20"
               disabled={sending}
             />
@@ -424,8 +430,8 @@ export default function AISidebar({ onSessionCreated, onSessionDeleted }: AISide
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" showCloseButton={false} className="w-full p-0 sm:max-w-[380px]">
           <SheetHeader className="sr-only">
-            <SheetTitle>AI Assistant</SheetTitle>
-            <SheetDescription>Chat with your workout AI assistant</SheetDescription>
+            <SheetTitle>{t('ai.title')}</SheetTitle>
+            <SheetDescription>{t('ai.chatDescription')}</SheetDescription>
           </SheetHeader>
           {chatContent}
         </SheetContent>

@@ -6,7 +6,9 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false)
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(
+    window.location.hash.includes('type=recovery')
+  )
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -17,11 +19,15 @@ export function useAuth() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setSession(session)
-        setUser(session?.user ?? null)
         if (event === 'PASSWORD_RECOVERY') {
           setIsPasswordRecovery(true)
         }
+        // Also catch SIGNED_IN triggered by a recovery link
+        if (event === 'SIGNED_IN' && window.location.hash.includes('type=recovery')) {
+          setIsPasswordRecovery(true)
+        }
+        setSession(session)
+        setUser(session?.user ?? null)
       }
     )
 

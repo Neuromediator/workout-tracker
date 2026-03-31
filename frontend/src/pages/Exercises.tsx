@@ -17,9 +17,20 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { fetchExercises, createExercise, deleteExercise, type Exercise } from '@/api/exercises'
+import { useTranslation } from '@/lib/i18n'
 import { Search, Plus, Trash2, Dumbbell } from 'lucide-react'
 
 const MUSCLE_GROUPS = ['all', 'chest', 'back', 'legs', 'shoulders', 'arms', 'core']
+
+const MUSCLE_GROUP_KEYS: Record<string, string> = {
+  all: 'exercises.all',
+  chest: 'exercises.chest',
+  back: 'exercises.back',
+  legs: 'exercises.legs',
+  shoulders: 'exercises.shoulders',
+  arms: 'exercises.arms',
+  core: 'exercises.core',
+}
 
 const MUSCLE_COLORS: Record<string, string> = {
   chest: 'bg-red-500/15 text-red-400 ring-red-500/20',
@@ -31,6 +42,7 @@ const MUSCLE_COLORS: Record<string, string> = {
 }
 
 export default function Exercises() {
+  const { t } = useTranslation()
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -103,28 +115,28 @@ export default function Exercises() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-heading text-xl font-bold tracking-tight">Exercise Library</h2>
-          <p className="text-sm text-muted-foreground">{filtered.length} exercises</p>
+          <h2 className="font-heading text-xl font-bold tracking-tight">{t('exercises.title')}</h2>
+          <p className="text-sm text-muted-foreground">{filtered.length} {t('exercises')}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <Button size="sm" onClick={() => setDialogOpen(true)} className="bg-warm text-warm-foreground hover:bg-warm/90">
-            <Plus className="mr-1 h-4 w-4" /> Add Exercise
+            <Plus className="mr-1 h-4 w-4" /> {t('exercises.addExercise')}
           </Button>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Custom Exercise</DialogTitle>
+              <DialogTitle>{t('exercises.addCustom')}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="space-y-2">
-                <Label>Name</Label>
+                <Label>{t('exercises.name')}</Label>
                 <Input value={newName} onChange={(e) => setNewName(e.target.value)} required />
               </div>
               <div className="space-y-2">
-                <Label>Description</Label>
+                <Label>{t('exercises.description')}</Label>
                 <Input value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Muscle Group</Label>
+                <Label>{t('exercises.muscleGroup')}</Label>
                 <Select value={newMuscleGroup} onValueChange={(v) => v && setNewMuscleGroup(v)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -132,22 +144,22 @@ export default function Exercises() {
                   <SelectContent>
                     {MUSCLE_GROUPS.filter((g) => g !== 'all').map((g) => (
                       <SelectItem key={g} value={g}>
-                        {g.charAt(0).toUpperCase() + g.slice(1)}
+                        {t(MUSCLE_GROUP_KEYS[g])}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Tags (comma separated)</Label>
+                <Label>{t('exercises.tags')}</Label>
                 <Input
                   value={newTags}
                   onChange={(e) => setNewTags(e.target.value)}
-                  placeholder="barbell, compound"
+                  placeholder={t('exercises.tagsPlaceholder')}
                 />
               </div>
               <Button type="submit" className="w-full bg-warm text-warm-foreground hover:bg-warm/90">
-                Create Exercise
+                {t('exercises.create')}
               </Button>
             </form>
           </DialogContent>
@@ -159,7 +171,7 @@ export default function Exercises() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search exercises..."
+            placeholder={t('exercises.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -176,7 +188,7 @@ export default function Exercises() {
                   : 'bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground'
               }`}
             >
-              {g === 'all' ? 'All' : g.charAt(0).toUpperCase() + g.slice(1)}
+              {t(MUSCLE_GROUP_KEYS[g])}
             </button>
           ))}
         </div>
@@ -186,8 +198,8 @@ export default function Exercises() {
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/50 py-16 text-muted-foreground">
           <Dumbbell className="mb-3 h-10 w-10 opacity-30" />
-          <p className="font-medium">No exercises found</p>
-          <p className="mt-1 text-sm">Try adjusting your search or filters</p>
+          <p className="font-medium">{t('exercises.noFound')}</p>
+          <p className="mt-1 text-sm">{t('exercises.tryAdjusting')}</p>
         </div>
       ) : (
         <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -226,7 +238,7 @@ export default function Exercises() {
                       </span>
                     ))}
                     {exercise.is_custom && (
-                      <Badge className="bg-warm/15 text-warm text-[11px]">Custom</Badge>
+                      <Badge className="bg-warm/15 text-warm text-[11px]">{t('custom')}</Badge>
                     )}
                   </div>
                 </div>

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useTranslation } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dumbbell, Mail, ArrowLeft } from 'lucide-react'
 
 export default function Login() {
+  const { t, lang, setLang } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
@@ -38,7 +40,7 @@ export default function Login() {
     e.preventDefault()
     setError('')
     if (!email) {
-      setError('Please enter your email address')
+      setError(t('login.enterEmail'))
       return
     }
     setLoading(true)
@@ -53,21 +55,31 @@ export default function Login() {
     setLoading(false)
   }
 
+  const langToggle = (
+    <button
+      onClick={() => setLang(lang === 'en' ? 'ru' : 'en')}
+      className="fixed top-4 right-4 rounded-lg bg-secondary px-2.5 py-1.5 text-xs font-bold text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
+    >
+      {lang === 'en' ? 'RU' : 'EN'}
+    </button>
+  )
+
   // Sign-up success screen
   if (signUpSuccess) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
+        {langToggle}
         <div className="w-full max-w-sm space-y-6 text-center">
           <div className="flex flex-col items-center gap-3">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 ring-1 ring-emerald-500/20">
               <Mail className="h-7 w-7 text-emerald-500" />
             </div>
             <h1 className="font-heading text-2xl font-bold tracking-tight">
-              Check your email
+              {t('login.checkEmail')}
             </h1>
             <p className="text-sm text-muted-foreground">
-              We sent a confirmation link to <span className="font-medium text-foreground">{email}</span>.
-              Click the link in the email to activate your account.
+              {t('login.confirmationSent')} <span className="font-medium text-foreground">{email}</span>.
+              {' '}{t('login.clickToActivate')}
             </p>
           </div>
           <Button
@@ -79,7 +91,7 @@ export default function Login() {
             }}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Sign In
+            {t('login.backToSignIn')}
           </Button>
         </div>
       </div>
@@ -90,17 +102,18 @@ export default function Login() {
   if (resetSent) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
+        {langToggle}
         <div className="w-full max-w-sm space-y-6 text-center">
           <div className="flex flex-col items-center gap-3">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warm/10 ring-1 ring-warm/20">
               <Mail className="h-7 w-7 text-warm" />
             </div>
             <h1 className="font-heading text-2xl font-bold tracking-tight">
-              Check your email
+              {t('login.checkEmail')}
             </h1>
             <p className="text-sm text-muted-foreground">
-              We sent a password reset link to <span className="font-medium text-foreground">{email}</span>.
-              Click the link in the email to set a new password.
+              {t('login.resetSent')} <span className="font-medium text-foreground">{email}</span>.
+              {' '}{t('login.clickToReset')}
             </p>
           </div>
           <Button
@@ -112,7 +125,7 @@ export default function Login() {
             }}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Sign In
+            {t('login.backToSignIn')}
           </Button>
         </div>
       </div>
@@ -123,6 +136,7 @@ export default function Login() {
   if (forgotPassword) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
+        {langToggle}
         <div className="w-full max-w-sm space-y-8">
           <div className="flex flex-col items-center gap-3">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warm/10 ring-1 ring-warm/20">
@@ -130,10 +144,10 @@ export default function Login() {
             </div>
             <div className="text-center">
               <h1 className="font-heading text-2xl font-bold tracking-tight">
-                Reset password
+                {t('login.resetPassword')}
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Enter your email and we'll send you a reset link
+                {t('login.resetDescription')}
               </p>
             </div>
           </div>
@@ -141,7 +155,7 @@ export default function Login() {
           <form onSubmit={handleResetPassword} className="space-y-3">
             <Input
               type="email"
-              placeholder="Email"
+              placeholder={t('login.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -154,7 +168,7 @@ export default function Login() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Sending...' : 'Send Reset Link'}
+              {loading ? t('login.sending') : t('login.sendResetLink')}
             </Button>
           </form>
 
@@ -167,7 +181,7 @@ export default function Login() {
               className="font-medium text-warm transition-colors hover:text-warm/80"
             >
               <ArrowLeft className="mr-1 inline h-3 w-3" />
-              Back to Sign In
+              {t('login.backToSignIn')}
             </button>
           </p>
         </div>
@@ -177,6 +191,7 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
+      {langToggle}
       <div className="w-full max-w-sm space-y-8">
         <div className="flex flex-col items-center gap-3">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warm/10 ring-1 ring-warm/20">
@@ -184,10 +199,10 @@ export default function Login() {
           </div>
           <div className="text-center">
             <h1 className="font-heading text-2xl font-bold tracking-tight">
-              Workout Tracker
+              {t('login.title')}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {isSignUp ? 'Create your account' : 'Sign in to continue'}
+              {isSignUp ? t('login.createAccount') : t('login.signInContinue')}
             </p>
           </div>
         </div>
@@ -195,14 +210,14 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-3">
           <Input
             type="email"
-            placeholder="Email"
+            placeholder={t('login.email')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <Input
             type="password"
-            placeholder="Password"
+            placeholder={t('login.password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -219,7 +234,7 @@ export default function Login() {
                 }}
                 className="text-xs text-muted-foreground transition-colors hover:text-warm"
               >
-                Forgot password?
+                {t('login.forgotPassword')}
               </button>
             </div>
           )}
@@ -231,12 +246,12 @@ export default function Login() {
           )}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
+            {loading ? t('loading') : isSignUp ? t('login.signUp') : t('login.signIn')}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+          {isSignUp ? t('login.alreadyHaveAccount') : t('login.dontHaveAccount')}{' '}
           <button
             onClick={() => {
               setIsSignUp(!isSignUp)
@@ -244,7 +259,7 @@ export default function Login() {
             }}
             className="font-medium text-warm transition-colors hover:text-warm/80"
           >
-            {isSignUp ? 'Sign In' : 'Sign Up'}
+            {isSignUp ? t('login.signIn') : t('login.signUp')}
           </button>
         </p>
       </div>

@@ -23,6 +23,7 @@ import {
   updateRoutine,
   type RoutineExerciseIn,
 } from '@/api/routines'
+import { useTranslation } from '@/lib/i18n'
 import { Plus, ChevronUp, ChevronDown, Trash2, ArrowLeft, Search } from 'lucide-react'
 
 interface RoutineBuilderProps {
@@ -39,7 +40,18 @@ interface RoutineExerciseRow {
 
 const MUSCLE_GROUPS = ['all', 'chest', 'back', 'legs', 'shoulders', 'arms', 'core']
 
+const MUSCLE_GROUP_KEYS: Record<string, string> = {
+  all: 'exercises.all',
+  chest: 'exercises.chest',
+  back: 'exercises.back',
+  legs: 'exercises.legs',
+  shoulders: 'exercises.shoulders',
+  arms: 'exercises.arms',
+  core: 'exercises.core',
+}
+
 export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProps) {
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [rows, setRows] = useState<RoutineExerciseRow[]>([])
   const [exercises, setExercises] = useState<Exercise[]>([])
@@ -67,7 +79,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
               .sort((a, b) => a.order - b.order)
               .map((re) => ({
                 exercise_id: re.exercise_id,
-                exercise_name: nameMap[re.exercise_id] || 'Unknown',
+                exercise_name: nameMap[re.exercise_id] || t('session.unknown'),
                 target_sets: re.target_sets,
                 target_reps: re.target_reps,
               }))
@@ -166,19 +178,19 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
           <ArrowLeft className="h-4 w-4" />
         </button>
         <h2 className="font-heading text-xl font-bold tracking-tight">
-          {routineId ? (isTemplate ? 'Use Template' : 'Edit Routine') : 'New Routine'}
+          {routineId ? (isTemplate ? t('builder.useTemplate') : t('builder.editRoutine')) : t('builder.newRoutine')}
         </h2>
       </div>
 
       {/* Routine Name */}
       <div className="space-y-2">
         <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Routine Name
+          {t('builder.routineName')}
         </Label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Monday Push Day"
+          placeholder={t('builder.namePlaceholder')}
           className="text-base"
         />
       </div>
@@ -187,7 +199,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Exercises ({rows.length})
+            {t('builder.exercisesCount')} ({rows.length})
           </Label>
           <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
             <Button
@@ -196,17 +208,17 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
               onClick={() => setPickerOpen(true)}
               className="border-warm/30 text-warm hover:bg-warm/10 hover:text-warm"
             >
-              <Plus className="mr-1 h-4 w-4" /> Add
+              <Plus className="mr-1 h-4 w-4" /> {t('add')}
             </Button>
             <DialogContent className="max-w-lg">
               <DialogHeader>
-                <DialogTitle>Add Exercise</DialogTitle>
+                <DialogTitle>{t('builder.addExercise')}</DialogTitle>
               </DialogHeader>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
-                    placeholder="Search..."
+                    placeholder={t('builder.searchExercises')}
                     value={pickerSearch}
                     onChange={(e) => setPickerSearch(e.target.value)}
                     className="pl-9"
@@ -219,7 +231,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
                   <SelectContent>
                     {MUSCLE_GROUPS.map((g) => (
                       <SelectItem key={g} value={g}>
-                        {g === 'all' ? 'All' : g.charAt(0).toUpperCase() + g.slice(1)}
+                        {t(MUSCLE_GROUP_KEYS[g])}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -248,7 +260,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
 
         {rows.length === 0 ? (
           <div className="flex items-center justify-center rounded-xl border border-dashed border-border/50 py-12 text-muted-foreground">
-            <p className="text-sm">Add exercises to build your routine</p>
+            <p className="text-sm">{t('builder.addExercisesPrompt')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -286,7 +298,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
                     </div>
                     <div className="mt-2 flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Sets</span>
+                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">{t('builder.setsLabel')}</span>
                         <Input
                           type="number"
                           min={1}
@@ -297,7 +309,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
                         />
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Reps</span>
+                        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">{t('builder.repsLabel')}</span>
                         <Input
                           type="number"
                           min={1}
@@ -330,7 +342,7 @@ export default function RoutineBuilder({ routineId, onBack }: RoutineBuilderProp
         disabled={!name.trim() || rows.length === 0 || saving}
         className="w-full bg-warm text-warm-foreground hover:bg-warm/90 disabled:bg-warm/30"
       >
-        {saving ? 'Saving...' : routineId && !isTemplate ? 'Update Routine' : 'Create Routine'}
+        {saving ? t('builder.saving') : routineId && !isTemplate ? t('builder.updateRoutine') : t('builder.createRoutine')}
       </Button>
     </div>
   )

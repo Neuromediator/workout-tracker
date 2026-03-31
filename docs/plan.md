@@ -296,3 +296,15 @@ docker compose up --build -d
 - `.dockerignore` to keep images small
 - Integration tests: 14 tests covering exercises CRUD, session lifecycle, progress endpoints
 - Health check endpoint at `/api/health`
+- Deployed to Oracle Cloud Free Tier ARM VM at https://myfitnesspal.online
+
+### Phase 7: Auth UX + Localization ✅
+- Sign-up confirmation screen (shows "Check your email" message after registration)
+- Password reset flow (Forgot password → email link → set new password page)
+  - `PASSWORD_RECOVERY` event detected in `useAuth` hook, shows `ResetPassword.tsx`
+  - Supabase redirect URL: `https://myfitnesspal.online/reset-password`
+- Clear AI chat history button (trash icon in sidebar header, resets to greeting)
+- Russian/English language toggle (EN/RU button in header and login page)
+  - Translation system: `frontend/src/lib/i18n.tsx` with `I18nProvider` + `useTranslation` hook
+  - ~130 string pairs covering all pages, persisted in localStorage
+  - Dates in History/Progress use locale-aware formatting (`ru-RU` / default)
